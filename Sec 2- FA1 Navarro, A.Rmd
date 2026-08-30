@@ -1,0 +1,217 @@
+---
+title: "APM1110 FA1 - Navarro"
+author: "Angelo M. Navarro"
+date: "2026-08-29"
+output:
+  github_document: default
+---
+
+
+
+# Pearson's Skewness
+
+<!-- Let's first import the dataset to be used -->
+`r results <- read.csv("C:/Users/Angelo/Downloads/results.csv")`
+
+Before we begin, let's have a quick preview of the dataset we are working with:
+```{r}
+summary(results)
+head(results)
+```
+
+The fact that there are 120 rows in the dataset makes manual computation incredibly inefficient.
+Making an R program would prove to be a far more graceful solution. **Below is a custom function that simulates Pearson's Skewness.**
+
+*Note: There dataset has NA values, so the na.rm argument needs to = TRUE for every stat function used. Otherwise, the said functions would not return a numeric value.*
+
+```{r}
+    p.skew <- function(x) {
+            3 * (mean(x, na.rm = T) - median(x, na.rm = T)) / sd(x, na.rm = T)
+    }
+```
+
+\newpage
+## Skewness obtained using Pearson's Approximation:
+
+<!-- We get the approximate skewness for each exam and store each in a variable -->
+`r pskew.arch1 <- p.skew(results$arch1)`
+`r pskew.arch2 <- p.skew(results$arch2)`
+`r pskew.prog1 <- p.skew(results$prog1)`
+`r pskew.prog2 <- p.skew(results$prog2)`
+<!-- Then we create a table displaying the four approximate skewness values -->
+`r Skewness_Result <- matrix(c(pskew.arch1, pskew.arch2, pskew.prog1, pskew.prog2), ncol=4)`
+`r colnames(Skewness_Result) <- c("ARCH1", "ARCH2", "PROG1", "PROG2")`
+`r tab <- as.table(Skewness_Result)`
+
+```{r}
+Skewness_Result
+```
+
+To check if the modified formula gives a reasonable approximation,
+let's compare the answers obtained to how the data is laid out on a histogram.
+
+```{r}
+hist(results$arch1, main="ARCH1 (-0.5896811)", xlab= "Exam Scores")
+```
+\newpage
+```{r}
+hist(results$arch2, main="ARCH2 (0.5190494)", xlab= "Exam Scores")
+```
+\newpage
+```{r}
+hist(results$prog1, main="PROG1 (-0.6345275)", xlab= "Exam Scores")
+```
+\newpage
+```{r}
+hist(results$prog2, main="PROG2 (-0.3854051)", xlab= "Exam Scores")
+```
+\newpage
+
+## Graphical Analysis:
+According to the values returned by the **p.skew** function,
+
++ The **ARCH1, PROG1, and PROG2** exam scores all have **negative skews**; the most pronounced being PROG1 and the least being PROG2. This means more scores are condensed on the right side, thus more students scored above the median.
++ **ARCH2** is the only one with a **positive skew**, which means more students scored below the median.
+
+**All data appears as expected according to the skew function**.
+Those with negative skews have most of their data points on the right, and the one with a positive skew has most of its data points on the left.
+    
+## Exact Skewness
+We can also check the accuracy of Pearson's formula by testing it against the original.
+**Let's use the syntax provided in Example 2.2:**
+
+```{r}
+    e.skew <- function(x) {
+              xbar <- mean(x, na.rm = T)
+              sum2 <- sum((x-xbar) ^2, na.rm = T)
+              sum3 <- sum((x-xbar) ^3, na.rm = T)
+              e.skew <- (sqrt(length(x)) * sum3 / (sum2 ^ 1.5))
+              }
+```
+
+<!-- Like earlier, we get the exact skewness for each exam and store each in a variable -->
+`r eskew.arch1 <- e.skew(results$arch1)`
+`r eskew.arch2 <- e.skew(results$arch2)`
+`r eskew.prog1 <- e.skew(results$prog1)`
+`r eskew.prog2 <- e.skew(results$prog2)`
+<!-- Then we create another table. This time, displaying the exact skewness values -->
+`r Exact_Skewness <- matrix(c(eskew.arch1, eskew.arch2, eskew.prog1, eskew.prog2), ncol=4)`
+`r colnames(Exact_Skewness) <- c("ARCH1", "ARCH2", "PROG1", "PROG2")`
+`r tab1 <- as.table(Exact_Skewness)`
+
+Now let's check the percent error of each variable:
+
+```{r}
+error.arch1 <- (pskew.arch1 - eskew.arch1) / eskew.arch1
+error.arch2 <- (pskew.arch2 - eskew.arch2) / eskew.arch2
+error.prog1 <- (pskew.prog1 - eskew.prog1) / eskew.prog1
+error.prog2 <- (pskew.prog2 - eskew.prog2) / eskew.prog2
+```
+
+<!-- Again, we create another table displaying the percent error -->
+`r Percent_Error <- matrix(c(error.arch1, error.arch2, error.prog1, error.prog2), ncol=4)`
+`r colnames(Percent_Error) <- c("ARCH1", "ARCH2", "PROG1", "PROG2")`
+`r tab2 <- as.table(Percent_Error)`
+
+```{r}
+Percent_Error
+```
+
+## Conclusion
+Pearson's formula gives the correct *type* of skewness,
+but may give an inaccurate *degree* of skewness.
+
+\newpage
+
+# Displaying Data
+First let's input the data from Exercise 1.1:
+
+```{r}
+females <- c(57, 59, 78, 79, 60, 65, 68, 71, 75, 48, 51, 55, 56, 41, 43,
+44, 75, 78, 80, 81, 83, 83, 85)
+males <- c(48, 49, 49, 30, 30, 31, 32, 35, 37, 41, 86, 42, 51, 53, 56,
+42, 44, 50, 51, 65, 67, 51, 56, 58, 64, 64, 75)
+```
+
+## Stem-and-Leaf Plots
+```{r}
+stem(females)
+stem(males)
+```
+
+\newpage
+## Advantages of Stem-and-Leaf Plots vs. Histograms:
+According to the ChartsMakers Editorial Team (2026)[^1], stem-and-leaf plots are better than histograms for:
+
+* Preserving the original value of data points
+* Being simpler to construct (only involves listing and no graphing)
+* Representing small data better (n < 50)
+* And, stem-and leaf plots can come in back-to-back form for easier comparison between two classes of data. For example (using the aplpack package):
+
+<!--- Let's access the package --->
+`r library(aplpack)`
+
+```{r}
+stem.leaf.backback(females, males)
+```
+
+
+\newpage
+## Box-plots
+```{r}
+boxplot(females)
+```
+\newpage
+```{r}
+boxplot(males)
+```
+
+\newpage
+## Box-plot Findings
+
+The following categories of findings are based on this article by McLeod (2025)[^2].
+
+**For the females in the class:**
+
++ The minimum score is slightly above 40
++ The lower quartile ends around the midpoint of 50 and 60
++ The median score is slightly below 70
++ The upper quartile starts slightly below 80
++ The maximum is in the mid-80s
++ The box-plot is negatively skewed
+
+**For the males in the class:**
+
++ The minimum score is 30
++ The lower quartile ends around 40
++ The median score is 50
++ The upper quartile begins between 50 and 60
++ The upper quartile ends around the mid-70s
++ The maximum value is an outlier in the mid-80s
++ The box-plot is positively skewed
+
+Let's check if our findings are accurate using the summary and exact skew functions on the two vectors:
+
+```{r}
+summary(females)
+summary(males)
+```
+
+```{r}
+print(e.skew(females))
+print(e.skew(males))
+```
+
+## Conclusion:
+Our assessment of the box-plot's displayed data is consistent with the actual statistical values.
+
+# References:
+
++ ChartsMakers. (2026). Stem and Leaf Plot vs Histogram: Key Differences. https://chartsmakers.com/blog/stem-and-leaf-plot-vs-histogram
++ McLeod, S. (2025). Reading a Box and Whisker Plot. SimplyPsychology. https://www.simplypsychology.org/boxplots.html
+
+[^1]: ChartsMakers. (2026). Stem and Leaf Plot vs Histogram: Key Differences.
+       https://chartsmakers.com/blog/stem-and-leaf-plot-vs-histogram
+
+[^2]: McLeod, S. (2025). Reading a Box and Whisker Plot. SimplyPsychology.
+       https://www.simplypsychology.org/boxplots.html

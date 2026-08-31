@@ -1,0 +1,56 @@
+---
+title: "Sec 2 - FA2 Navarro, A - FA2"
+author: "Angelo M. Navarro"
+date: "2026-08-31"
+output: pdf_document
+---
+
+## Rolling Dice
+
+```{r}
+dice_rolls <- sample(1:6, 600, replace = T)
+```
+
+# Frequency per Event
+We can count the frequency of each event *(1, 2, 3, 4, 5, 6)* by using the **sum function** and **logical operators**.
+The logical operators convert the numerical values into logical values (TRUE or FALSE). **TRUE is equivalent to 1 and FALSE is equivalent to 0.**
+```{r}
+event_1 <- sum(dice_rolls < 2)
+event_2 <- sum(dice_rolls > 1 & dice_rolls < 3)
+event_3 <- sum(dice_rolls > 2 & dice_rolls < 4)
+event_4 <- sum(dice_rolls > 3 & dice_rolls < 5)
+event_5 <- sum(dice_rolls > 4 & dice_rolls < 6)
+event_6 <- sum(dice_rolls > 5)
+```
+
+To help us visualize the data, let's use a table.
+<!-- Syntax for making the table -->
+`r Results <- matrix(c(event_1, event_2, event_3, event_4, event_5, event_6), ncol=6)`
+`r colnames(Results) <- c("1", "2", "3", "4", "5", "6")`
+`r tab <- as.table(Results)`
+
+```{r}
+Results
+```
+
+\newpage
+# Relative Frequencies
+To get the relative frequency, we simply need to divide the frequency of each event by the total number of dice rolls (600). **The obtained relative frequency can also serve as the estimated probability for each event.**
+```{r}
+rfreq_1 <- event_1 / 600
+rfreq_2 <- event_2 / 600
+rfreq_3 <- event_3 / 600
+rfreq_4 <- event_4 / 600
+rfreq_5 <- event_5 / 600
+rfreq_6 <- event_6 / 600
+```
+
+Again, let's use a table to organize our relative frequencies
+<!-- Syntax for making the second table -->
+`r Estimated_Probabilities <- matrix(c(rfreq_1, rfreq_2, rfreq_3, rfreq_4, rfreq_5, rfreq_6), ncol=6)`
+`r colnames(Estimated_Probabilities) <- c("1", "2", "3", "4", "5", "6")`
+`r tab <- as.table(Estimated_Probabilities)`
+
+```{r}
+Estimated_Probabilities
+```

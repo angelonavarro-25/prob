@@ -1,0 +1,103 @@
+---
+title: "PROB FA3"
+author: "Angelo M. Navarro"
+date: "2026-09-07"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+# Geospatial Analysis System
+Here is the dataset we are working with:
+<!--Let's set up our data into a table-->
+`r Sensors <- c(1, 2, 3, 4)`
+`r P_Supplied <- c(0.15, 0.20, 0.25, 0.40)`
+`r P_Relevant <- c(0.50, 0.60, 0.80, 0.85)`
+`r Geo_Analysis <- matrix(c(Sensors, P_Supplied, P_Relevant), ncol=3)`
+`r colnames(Geo_Analysis) <- c("Sensor", "Percentage of Images Supplied", "Percentage of Relevant Images")`
+`r tab <- as.table(Geo_Analysis)`
+
+```{r}
+Geo_Analysis
+```
+
+To get the overall percentage of relevant images, we essentially get the total of each sensor's weighted average. The **weight**, in this case is the **percentage of supplied images**. The elements of the second column are stored in the vector P_Supplied, and those of the third column are stored in P_Relevant.
+
+```{r}
+Overall_Relevant <- sum(P_Supplied * P_Relevant) * 100
+Overall_Relevant
+```
+
+**The overall percentage of relevant images is 73.5%.**
+
+\newpage
+# Coin Toss
+Let's illustrate the sample space by enumerating all possible combinations of t1 (first toss) and t2 (second toss).
+<!--The function below allows us to join the two outcomes into one event-->
+```{r}
+t1 <- c("H", "T")
+t2 <- c("H", "T")
+sample.space <- function(..., prefix = "(", suffix=')', sep = ",")
+                {paste0(prefix, levels(interaction(..., sep = sep)), suffix)
+                }
+S <- sample.space(t1, t2)
+S
+```
+
+Since, this we are using a fair coin, all outcomes have the same probability of occurring (1 in 4 or 0.25). 
+
+Now let's define each event:
+```{r}
+E1 <- c(S[1], S[4])
+E2 <- c(S[1], S[3])
+E3 <- c(S[1], S[2])
+print(E1)
+print(E2)
+print(E3)
+```
+
+All three events have the same probability at 0.5 (0.25 + 0.25). Let's store them in these variables.
+```{r}
+PE1 <- 0.5
+PE2 <- 0.5
+PE3 <- 0.5
+```
+
+\newpage
+## Pairwise Independence
+There are three possible pairings of events. *If the probability of the intersection of two events is equal to the product of their separate probabilities, then they are independent events.*
+
+### Probability of Intersection
+The intersect() function returns the common elements of multiple objects.
+```{r}
+intersect(E1, E2)
+intersect(E1, E3)
+intersect(E2, E3)
+```
+All pairings have one event in common, which has a probability of **0.25**.
+
+### Product of Paired Probabilities
+```{r}
+PE1 * PE2
+PE1 * PE3
+PE2 * PE3
+```
+
+Each pairings intersection probability and product of probability are equal, therefore **E1, E2, and E3 are pairwise independent.**
+
+\newpage
+## Mutual Independence
+*The three events are mutually independent if the probability the common outcomes of all three are equal to the product of the three events' probability.*
+
+### Probability of Intersection
+```{r}
+intersect(E1, intersect(E2, E3))
+```
+There is only one outcome, so probability of their intersection is 0.25.
+
+### Product of Probabilities
+```{r}
+PE1 * PE2 * PE3
+```
+
+**0.25 is not equal to 0.125, therefore they are not mutually independent.**

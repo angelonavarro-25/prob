@@ -1,0 +1,114 @@
+---
+title: "PROB FA4"
+author: "Angelo M. Navarro"
+date: "2026-09-07"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+# Binary Communication Channel
+Let P(A) denote the probability of a 0 being transmitted and P(B) the probability of 1 being transmitted. P(A) = 0.7.
+Then, by the **axiom of certainty and definition of complement**:
+```{r}
+A <- 0.7
+B <- 1 - A
+B
+```
+We can represent these probabilities using a table
+<!-- Calibrating table -->
+`r Binary_Data <- c(0, 1)`
+`r Transmission_Chance <- c(A, B)`
+`r Transmissions <- matrix(c(Binary_Data, Transmission_Chance), ncol=2)`
+`r colnames(Transmissions) <- c("Binary Data", "Chance of Transmission")`
+`r tab <- as.table(Transmissions)`
+```{r}
+Transmissions
+```
+
+
+Now let P(A1) be the probability of receiving a 0, given that 0 was transmitted. On the other hand, let P(A2) the probability of an error, given that 0 was transmitted. Likewise, B1 is receiving a 1, given that a 1 was transmitted, and B2 is encountering an error while transmitting a 1.
+Again, using the **axiom of certainty and definition of complement**:
+```{r}
+A1 <- 0.95
+A2 <- 1 - A1
+A2
+
+B1 <- 0.75
+B2 <- 1 - B1
+B2
+```
+
+Let's use a table to organize these probabilities
+<!-- Calibrating table -->
+`r R_Correct <- c(A1, B1)`
+`r R_Error <- c(A2, B2)`
+`r Receiving <- matrix(c(R_Correct, R_Error), ncol = 2)`
+`r colnames(Receiving) <- c("Received Correctly", "Error in Reception")`
+`r tab <- as.table(Receiving)`
+```{r}
+Receiving
+```
+
+## Probability that a 1 was received
+Let's represent this event as E1. At first glance this could simply just be P(B1), but an error in transmitting a 0 would also result in receiving a 1. Therefore, E1 is the union of B1 and A2.
+So by the **law of total probability** *(with mutually exclusive and exhaustive events)*:
+```{r}
+E1 = (B * B1) + (A * A2)
+```
+
+**The probability of receiving a 1 is 26%.**
+
+## Probability that a 1 was received given that a 1 was transmitted
+Let's represent this using P(E2). This is equivalent to the event B1, where a 1 was transmitted and correctly received.
+By **law of total probability:**
+```{r}
+E2 = (B * B1)
+```
+
+**The probability of transmitting then receiving a 1 is 7.5%.**
+
+\newpage
+# Jane, Amy, and Ava
+Let J represent Jane's work, M Amy's, and V Ava's. Let JE, ME, and VE represent their faulty work, respectively.
+```{r}
+J <- 0.1
+M <- 0.3
+V <- 0.6
+
+JE <- 0.08
+ME <- 0.05
+VE <- 0.01
+```
+
+Let's tabulate our data for this problem.
+<!-- Calibrating table -->
+`r P_Program <- c(J, M, V)`
+`r P_Error <- c(JE, ME, VE)`
+`r IT_Work <- matrix(c(P_Program, P_Error), ncol=2)`
+`r colnames(IT_Work) <- c("Proportion of Work Done", "Proportion of Faulty Work")`
+`r tab <- as.table(IT_Work)`
+```{r}
+IT_Work
+```
+
+## Overall Percentage of Error
+Let's represent this event using TE. This is equivalent to the union of JE, ME, and VE.
+Again, using the **law of total probability**:
+```{r}
+TE <- J * JE + M * ME + V * VE
+TE
+```
+
+**The overall chance of error is 2.9%.**
+
+## Most likely employee to make a program with error
+Let's break down the probability of error by each employee
+```{r}
+J * JE
+M * ME
+V * VE
+```
+
+**Amy has the highest probability among them all, so she is most likely to make a faulty program.**
+
